@@ -88,6 +88,13 @@ client.connect(err => {
       })
   })
 
+  app.get('/service/:serviceId', (req, res) => {
+    servicesCollection.find({ _id: ObjectId(req.params.serviceId) })
+      .toArray((err, services) => {
+        res.send(services[0])
+      })
+  })
+
 });
 
 
