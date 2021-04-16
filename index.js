@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
+const ObjectId = require("mongodb").ObjectID;
 require('dotenv').config()
 const port = process.env.PORT || 5000
 
@@ -77,6 +78,15 @@ client.connect(err => {
         res.send(documents);
       })
   });
+
+  app.delete("/deleteService/:id", (req, res) => {
+    servicesCollection.deleteOne({ _id: ObjectId(req.params.id) })
+      .then(result => {
+        // console.log(result.deletedCount)
+        res.send(result.deletedCount > 0);
+
+      })
+  })
 
 });
 
