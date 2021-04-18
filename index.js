@@ -19,6 +19,9 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   const servicesCollection = client.db(`${process.env.DB_NAME}`).collection("services");
   const reviewsCollection = client.db(`${process.env.DB_NAME}`).collection("reviews");
+  const bookingsCollection = client.db(`${process.env.DB_NAME}`).collection("bookings");
+  const adminsCollection = client.db(`${process.env.DB_NAME}`).collection("admins");
+
 
   app.post('/addService', (req, res)=>{
     const file = req.files.file;
@@ -94,6 +97,41 @@ client.connect(err => {
         res.send(services[0])
       })
   })
+
+  app.post('/addBooking', (req, res) => {
+    const newBooking = req.body;
+    bookingsCollection.insertOne(newBooking)
+      .then(result => {
+        res.send(result.insertedCount > 0)
+      })
+  });
+
+  app.get('/bookings', (req, res) => {
+    bookingsCollection.find({})
+      .toArray((err, documents) => {
+        res.send(documents);
+      })
+  });
+
+  app.patch('/updateBooking', (req, res) => {
+    // console.log(req.body);
+    bookingsCollection.updateOne({ _id: ObjectId(req.body.bookingId) },
+      {
+        $set: { status: req.body.status }
+      })
+      .then(result => {
+        // console.log(result);
+        res.send(result.modifiedCount > 0);
+      })
+  })
+
+  app.post('/addAdmin', (req, res) => {
+    const newAdmin = req.body;
+    adminsCollection.insertOne(newAdmin)
+      .then(result => {
+        res.send(result.insertedCount > 0)
+      })
+  });
 
 });
 
