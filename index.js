@@ -113,6 +113,14 @@ client.connect(err => {
       })
   });
 
+  app.get('/userBookings', (req, res) => {
+    const queryEmail = req.query.email;
+    bookingsCollection.find({ email: queryEmail })
+      .toArray((err, userBookings) => {
+        res.send(userBookings);
+      })
+  })
+
   app.patch('/updateBooking', (req, res) => {
     // console.log(req.body);
     bookingsCollection.updateOne({ _id: ObjectId(req.body.bookingId) },
@@ -132,6 +140,14 @@ client.connect(err => {
         res.send(result.insertedCount > 0)
       })
   });
+
+  app.post('/isAdmin', (req, res) => {
+    const email = req.body.email;
+    adminsCollection.find({ email: email })
+      .toArray((err, admins) => {
+        res.send(admins.length > 0);
+      })
+  })
 
 });
 
